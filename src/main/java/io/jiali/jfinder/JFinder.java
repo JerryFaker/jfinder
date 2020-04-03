@@ -6,11 +6,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class JFinder {
+
     public static File currentPath;
+
     void cd(File f) {
         if (f.exists() && f.isDirectory())
         {
             currentPath = f;
+            System.out.println("目前路径为："+f.getName());
         }
         else
         {
@@ -18,12 +21,23 @@ public class JFinder {
         }
     }
 
-    void list(File f) {
+    void list() {
+        File f = currentPath;
         if (f.exists() && f.isDirectory())
         {
             File[] files = f.listFiles();
+            int count = 0;
             for (File file : files) {
-                System.out.println(file.getName());
+                System.out.print(file.getName());
+                count++;
+                if (count < 4) {
+                    System.out.print("    ");
+                }
+                else
+                {
+                    System.out.println();
+                    count = 0;
+                }
             }
         }
         else
@@ -36,7 +50,7 @@ public class JFinder {
         if (!f.exists())
         {
             f.mkdir();
-            System.out.println("新目录："+f.getName()+"成功创建");
+            System.out.println("名为"+f.getName()+"的新目录成功创建");
 
         }
         else
@@ -45,7 +59,7 @@ public class JFinder {
         }
     }
 
-    void copyDir(File src, File dest) {
+    void copy(File src, File dest) {
         if (src.isDirectory())
         {
             if (!dest.exists())
@@ -54,7 +68,7 @@ public class JFinder {
 
                 String fs[] = src.list();
                 for (String f : fs) {
-                    copyDir(new File(src, f), new File(dest, f));
+                    copy(new File(src, f), new File(dest, f));
                 }
             }
         }
@@ -105,5 +119,16 @@ public class JFinder {
         {
             System.out.println("操作失败，"+f.getName()+"不存在");
         }
+    }
+
+    void help() {
+        System.out.println("cd ~/Documents -- 转到此目录下 ");
+        System.out.println("ls -- 罗列当前目录下内容");
+        System.out.println("mkdir -- 在当前目录下新建文件夹");
+        System.out.println("rmdir -- 删除当前目录以及目录下所有文件");
+        System.out.println("cp -- 拷贝文件或目录到其他目录下");
+        System.out.println("encrypt -- 加密文件");
+        System.out.println("decrypt -- 解密文件");
+        System.out.println("quit -- 退出程序");
     }
 }
