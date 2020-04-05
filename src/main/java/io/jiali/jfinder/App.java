@@ -1,20 +1,18 @@
 package io.jiali.jfinder;
 
 import java.io.File;
-import java.util.Scanner;
 
 public class App {
 
   public static void main(String[] args) {
+
     JFinder jFinder = new JFinder();
-    Scanner scanner = new Scanner(System.in);
+    Controller controller = new Controller();
 
     jFinder.hello();
 
-    boolean isRun = true;
-
-    while (isRun) {
-      String[] input = jFinder.input(scanner.nextLine());
+    while (jFinder.isRun()) {
+      String[] input = controller.inputFormat();
 
       switch (input[0]) {
         case "help": {
@@ -23,12 +21,12 @@ public class App {
         }
 
         case "quit": {
-          isRun = false;
+          jFinder.setRun();
           break;
         }
 
         case "cd": {
-          jFinder.cd(new File(input[1].isEmpty() ? jFinder.getInput("目录名") : input[1]));
+          jFinder.cd(input[1]);
           break;
         }
 
@@ -40,23 +38,29 @@ public class App {
         case "mkdir": {
           String name = input[1];
           if (input[1].isEmpty()) {
-            name = jFinder.getInput("新建目录的名称");
+            name = controller.input("新建目录的名称");
           }
           jFinder.makeDir(new File(jFinder.getCurrentPath().getAbsolutePath(), name));
           break;
         }
 
         case "rmdir": {
-          String name = input[1];
-          if (input[1].isEmpty()) {
-            name = jFinder.getInput("要删除的目录");
-          }
-          jFinder.removeDir(new File(name));
+          jFinder.removeDir(jFinder.directoryCheck(input[1],"删除",1));
           break;
         }
 
         case "cp": {
-          jFinder.copy(jFinder.copyCheck(input[1]), new File(jFinder.getInput("目标目录名")));
+          jFinder.copy(jFinder.check(input[1], "复制"), new File(controller.input("目标目录名")));
+          break;
+        }
+
+        case "encrypt": {
+          jFinder.encryptionCore(jFinder.directoryCheck(input[1], "加密", 0), true);
+          break;
+        }
+
+        case "decrypt": {
+          jFinder.encryptionCore(jFinder.directoryCheck(input[1], "解密", 0), false);
           break;
         }
 
@@ -66,6 +70,5 @@ public class App {
         }
       }
     }
-    scanner.close();
   }
 }
